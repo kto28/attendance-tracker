@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>出席率統計系統</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --primary: #3b82f6;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --border: #e2e8f0;
+      --shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans TC', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    h1 {
+      margin: 0 0 10px;
+      color: var(--primary);
+    }
+    .subtitle {
+      color: var(--muted);
+      margin: 0;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 24px;
+    }
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+    .card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+    .card h2 {
+      margin-top: 0;
+      font-size: 20px;
+      color: var(--primary);
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 16px;
+      font-family: inherit;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #2563eb;
+    }
+    button.secondary {
+      background: var(--muted);
+    }
+    button.secondary:hover {
+      background: #475569;
+    }
+    .btn-group {
+      display: flex;
+      gap: 10px;
+    }
+    .btn-group button {
+      flex: 1;
+    }
+    .members-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .member-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .member-item:last-child {
+      border-bottom: none;
+    }
+    .member-name {
+      font-weight: 600;
+    }
+    .member-stats {
+      font-size: 14px;
+      color: var(--muted);
+    }
+    .attendance-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-left: 8px;
+    }
+    .badge-present { background: #d1fae5; color: #065f46; }
+    .badge-absent { background: #fee2e2; color: #991b1b; }
+    .badge-late { background: #fef3c7; color: #92400e; }
+    .attendance-controls {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .attendance-controls button {
+      padding: 6px 12px;
+      font-size: 14px;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .stat-card {
+      background: var(--bg);
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+    }
+    .stat-value {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--primary);
+      margin: 8px 0;
+    }
+    .stat-label {
+      font-size: 14px;
+      color: var(--muted);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    th {
+      background: var(--bg);
+      font-weight: 600;
+      color: var(--text);
+    }
+    tr:hover {
+      background: #f8fafc;
+    }
+    .export-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📊 出席率統計系統</h1>
+      <p class="subtitle">記錄成員出席，自動計算出席率，生成排行榜</p>
+    </header>
+
+    <div class="grid">
+      <!-- 左欄：新增成員與操作 -->
+      <div>
+        <div class="card">
+          <h2>新增成員</h2>
+          <div class="form-group">
+            <label for="memberName">成員姓名</label>
+            <input type="text" id="memberName" placeholder="例如：陳大文" autocomplete="off">
+          </div>
+          <button id="addMemberBtn">加入成員</button>
+        </div>
+
+        <div class="card" style="margin-top: 20px;">
+          <h2>操作</h2>
+          <div class="btn-group">
+            <button id="recordAttendanceBtn" class="secondary">📅 記錄今日出席</button>
+            <button id="clearAllBtn" class="secondary">🗑️ 清除所有數據</button>
+          </div>
+          <div class="export-buttons">
+            <button id="exportCSVBtn">📥 匯出 CSV</button>
+            <button id="exportJSONBtn">📥 匯出 JSON</button>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top: 20px;">
+          <h2>成員列表</h2>
+          <ul class="members-list" id="membersList">
+            <!-- 動態生成 -->
+          </ul>
+        </div>
+      </div>
+
+      <!-- 右欄：統計與排行榜 -->
+      <div>
+        <div class="card">
+          <h2>📈 統計概覽</h2>
+          <div class="stats-grid" id="statsGrid">
+            <!-- 動態生成 -->
+          </div>
+        </div>
+
+        <div class="card" style="margin-top: 20px;">
+          <h2>🏆 出席率排行榜</h2>
+          <table id="rankingTable">
+            <thead>
+              <tr>
+                <th>排名</th>
+                <th>成員</th>
+                <th>出席次數</th>
+                <th>缺席次數</th>
+                <th>出席率</th>
+                <th>最後出席</th>
+              </tr>
+            </thead>
+            <tbody id="rankingBody">
+              <!-- 動態生成 -->
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card" style="margin-top: 20px;">
+          <h2>📅 近期出席記錄</h2>
+          <table id="recentTable">
+            <thead>
+              <tr>
+                <th>日期</th>
+                <th>成員</th>
+                <th>狀態</th>
+              </tr>
+            </thead>
+            <tbody id="recentBody">
+              <!-- 動態生成 -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>數據儲存在瀏覽器本地 (LocalStorage) · 最後更新: <span id="lastUpdated">-</span></p>
+      <p>GitHub: <a href="https://github.com/kto28/attendance-tracker" target="_blank">kto28/attendance-tracker</a></p>
+    </div>
+  </div>
+
+  <script>
+    // 數據結構
+    let members = JSON.parse(localStorage.getItem('attendance_members')) || [];
+    let attendance = JSON.parse(localStorage.getItem('attendance_records')) || [];
+
+    // DOM 元素
+    const memberNameInput = document.getElementById('memberName');
+    const addMemberBtn = document.getElementById('addMemberBtn');
+    const recordAttendanceBtn = document.getElementById('recordAttendanceBtn');
+    const clearAllBtn = document.getElementById('clearAllBtn');
+    const exportCSVBtn = document.getElementById('exportCSVBtn');
+    const exportJSONBtn = document.getElementById('exportJSONBtn');
+    const membersList = document.getElementById('membersList');
+    const statsGrid = document.getElementById('statsGrid');
+    const rankingBody = document.getElementById('rankingBody');
+    const recentBody = document.getElementById('recentBody');
+    const lastUpdatedSpan = document.getElementById('lastUpdated');
+
+    // 初始化
+    function init() {
+      updateLastUpdated();
+      renderMembersList();
+      renderStats();
+      renderRanking();
+      renderRecent();
+    }
+
+    // 更新最後更新時間
+    function updateLastUpdated() {
+      const now = new Date();
+      lastUpdatedSpan.textContent = now.toLocaleString('zh-Hant');
+    }
+
+    // 儲存數據
+    function saveData() {
+      localStorage.setItem('attendance_members', JSON.stringify(members));
+      localStorage.setItem('attendance_records', JSON.stringify(attendance));
+      updateLastUpdated();
+    }
+
+    // 新增成員
+    function addMember() {
+      const name = memberNameInput.value.trim();
+      if (!name) {
+        alert('請輸入成員姓名');
+        return;
+      }
+      if (members.some(m => m.name === name)) {
+        alert('成員已存在');
+        return;
+      }
+      members.push({
+        id: Date.now().toString(),
+        name,
+        joinDate: new Date().toISOString().split('T')[0]
+      });
+      memberNameInput.value = '';
+      saveData();
+      renderMembersList();
+      renderStats();
+      renderRanking();
+    }
+
+    // 刪除成員
+    function deleteMember(id) {
+      if (!confirm('確定刪除這位成員？所有出席記錄也會一併刪除。')) return;
+      members = members.filter(m => m.id !== id);
+      attendance = attendance.filter(r => r.memberId !== id);
+      saveData();
+      renderMembersList();
+      renderStats();
+      renderRanking();
+      renderRecent();
+    }
+
+    // 記錄今日出席
+    function recordAttendance() {
+      const today = new Date().toISOString().split('T')[0];
+      if (attendance.some(r => r.date === today)) {
+        if (!confirm('今日已有記錄，是否重新記錄？')) return;
+        attendance = attendance.filter(r => r.date !== today);
+      }
+      members.forEach(member => {
+        const status = prompt(`請輸入 ${member.name} 的出席狀態 (出席/缺席/遲到):`, '出席')?.trim() || '缺席';
+        attendance.push({
+          memberId: member.id,
+          memberName: member.name,
+          date: today,
+          status: status === '出席' ? 'present' : status === '遲到' ? 'late' : 'absent'
+        });
+      });
+      saveData();
+      renderStats();
+      renderRanking();
+      renderRecent();
+      alert('今日出席記錄完成');
+    }
+
+    // 計算成員統計
+    function calculateMemberStats(memberId) {
+      const records = attendance.filter(r => r.memberId === memberId);
+      const present = records.filter(r => r.status === 'present').length;
+      const late = records.filter(r => r.status === 'late').length;
+      const absent = records.filter(r => r.status === 'absent').length;
+      const total = records.length;
+      const rate = total > 0 ? Math.round((present + late * 0.5) / total * 100) : 0;
+      const lastDate = records.length > 0 ? records[records.length - 1].date : '從未';
+      return { present, late, absent, total, rate, lastDate };
+    }
+
+    // 渲染成員列表
+    function renderMembersList() {
+      membersList.innerHTML = '';
+      members.forEach(member => {
+        const stats = calculateMemberStats(member.id);
+        const li = document.createElement('li');
+        li.className = 'member-item';
+        li.innerHTML = `
+          <div>
+            <div class="member-name">${member.name}</div>
+            <div class="member-stats">加入: ${member.joinDate} · 出席率: ${stats.rate}%</div>
+          </div>
+          <button onclick="deleteMember('${member.id}')" style="padding:6px 12px;font-size:14px;">刪除</button>
+        `;
+        membersList.appendChild(li);
+      });
+    }
+
+    // 渲染統計概覽
+    function renderStats() {
+      const totalMembers = members.length;
+      const totalRecords = attendance.length;
+      const uniqueDates = [...new Set(attendance.map(r => r.date))].length;
+      const avgRate = members.length > 0 
+        ? Math.round(members.reduce((sum, m) => sum + calculateMemberStats(m.id).rate, 0) / members.length)
+        : 0;
+      
+      statsGrid.innerHTML = `
+        <div class="stat-card">
+          <div class="stat-label">總成員數</div>
+          <div class="stat-value">${totalMembers}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">總記錄數</div>
+          <div class="stat-value">${totalRecords}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">記錄天數</div>
+          <div class="stat-value">${uniqueDates}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">平均出席率</div>
+          <div class="stat-value">${avgRate}%</div>
+        </div>
+      `;
+    }
+
+    // 渲染排行榜
+    function renderRanking() {
+      const ranked = members.map(member => {
+        const stats = calculateMemberStats(member.id);
+        return { ...member, ...stats };
+      }).sort((a, b) => b.rate - a.rate);
+      
+      rankingBody.innerHTML = '';
+      ranked.forEach((member, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${index + 1}</td>
+          <td><strong>${member.name}</strong></td>
+          <td>${member.present}</td>
+          <td>${member.absent}</td>
+          <td><strong>${member.rate}%</strong></td>
+          <td>${member.lastDate}</td>
+        `;
+        rankingBody.appendChild(row);
+      });
+    }
+
+    // 渲染近期記錄
+    function renderRecent() {
+      const recent = [...attendance].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 10);
+      recentBody.innerHTML = '';
+      recent.forEach(record => {
+        const row = document.createElement('tr');
+        const badgeClass = {
+          present: 'badge-present',
+          late: 'badge-late',
+          absent: 'badge-absent'
+        }[record.status];
+        const statusText = {
+          present: '出席',
+          late: '遲到',
+          absent: '缺席'
+        }[record.status];
+        row.innerHTML = `
+          <td>${record.date}</td>
+          <td>${record.memberName}</td>
+          <td><span class="attendance-badge ${badgeClass}">${statusText}</span></td>
+        `;
+        recentBody.appendChild(row);
+      });
+    }
+
+    // 匯出 CSV
+    function exportCSV() {
+      const headers = ['成員ID', '成員姓名', '日期', '狀態'];
+      const rows = attendance.map(r => [r.memberId, r.memberName, r.date, r.status]);
+      const csvContent = [
+        headers.join(','),
+        ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+      ].join('\n');
+      const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `出席記錄_${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // 匯出 JSON
+    function exportJSON() {
+      const data = {
+        members,
+        attendance,
+        exportedAt: new Date().toISOString()
+      };
+      const jsonStr = JSON.stringify(data, null, 2);
+      const blob = new Blob([jsonStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `出席記錄_${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // 清除所有數據
+    function clearAll() {
+      if (!confirm('確定清除所有成員和出席記錄？此操作無法復原。')) return;
+      members = [];
+      attendance = [];
+      saveData();
+      renderMembersList();
+      renderStats();
+      renderRanking();
+      renderRecent();
+    }
+
+    // 事件監聽
+    addMemberBtn.addEventListener('click', addMember);
+    memberNameInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') addMember();
+    });
+    recordAttendanceBtn.addEventListener('click', recordAttendance);
+    clearAllBtn.addEventListener('click', clearAll);
+    exportCSVBtn.addEventListener('click', exportCSV);
+    exportJSONBtn.addEventListener('click', exportJSON);
+
+    // 初始化
+    init();
+  </script>
+</body>
+</html>
