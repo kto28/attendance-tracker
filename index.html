@@ -3,569 +3,368 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>出席率統計系統</title>
+  <title>Wisdom 例會出席系統</title>
   <style>
-    :root {
-      --bg: #f8fafc;
-      --card: #ffffff;
-      --text: #1e293b;
-      --muted: #64748b;
-      --primary: #3b82f6;
-      --success: #10b981;
-      --warning: #f59e0b;
-      --danger: #ef4444;
-      --border: #e2e8f0;
-      --shadow: 0 4px 12px rgba(0,0,0,0.05);
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans TC', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.5;
-    }
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-    header {
-      text-align: center;
-      margin-bottom: 30px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid var(--border);
-    }
-    h1 {
-      margin: 0 0 10px;
-      color: var(--primary);
-    }
-    .subtitle {
-      color: var(--muted);
-      margin: 0;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 2fr;
-      gap: 24px;
-    }
-    @media (max-width: 900px) {
-      .grid { grid-template-columns: 1fr; }
-    }
-    .card {
-      background: var(--card);
-      border-radius: 12px;
-      padding: 24px;
-      box-shadow: var(--shadow);
-      border: 1px solid var(--border);
-    }
-    .card h2 {
-      margin-top: 0;
-      font-size: 20px;
-      color: var(--primary);
-    }
-    .form-group {
-      margin-bottom: 16px;
-    }
-    label {
-      display: block;
-      margin-bottom: 6px;
-      font-weight: 600;
-      color: var(--text);
-    }
-    input, select, button {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font-size: 16px;
-      font-family: inherit;
-    }
-    input:focus, select:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-    }
-    button {
-      background: var(--primary);
-      color: white;
-      border: none;
-      cursor: pointer;
-      font-weight: 600;
-      transition: background 0.2s;
-    }
-    button:hover {
-      background: #2563eb;
-    }
-    button.secondary {
-      background: var(--muted);
-    }
-    button.secondary:hover {
-      background: #475569;
-    }
-    .btn-group {
-      display: flex;
-      gap: 10px;
-    }
-    .btn-group button {
-      flex: 1;
-    }
-    .members-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      max-height: 300px;
-      overflow-y: auto;
-    }
-    .member-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 0;
-      border-bottom: 1px solid var(--border);
-    }
-    .member-item:last-child {
-      border-bottom: none;
-    }
-    .member-name {
-      font-weight: 600;
-    }
-    .member-stats {
-      font-size: 14px;
-      color: var(--muted);
-    }
-    .attendance-badge {
-      display: inline-block;
-      padding: 4px 8px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 600;
-      margin-left: 8px;
-    }
-    .badge-present { background: #d1fae5; color: #065f46; }
-    .badge-absent { background: #fee2e2; color: #991b1b; }
-    .badge-late { background: #fef3c7; color: #92400e; }
-    .attendance-controls {
-      display: flex;
-      gap: 8px;
-      margin-top: 8px;
-    }
-    .attendance-controls button {
-      padding: 6px 12px;
-      font-size: 14px;
-    }
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px;
-      margin-top: 20px;
-    }
-    .stat-card {
-      background: var(--bg);
-      border-radius: 8px;
-      padding: 16px;
-      text-align: center;
-    }
-    .stat-value {
-      font-size: 32px;
-      font-weight: 800;
-      color: var(--primary);
-      margin: 8px 0;
-    }
-    .stat-label {
-      font-size: 14px;
-      color: var(--muted);
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-    th, td {
-      padding: 12px;
-      text-align: left;
-      border-bottom: 1px solid var(--border);
-    }
-    th {
-      background: var(--bg);
-      font-weight: 600;
-      color: var(--text);
-    }
-    tr:hover {
-      background: #f8fafc;
-    }
-    .export-buttons {
-      display: flex;
-      gap: 10px;
-      margin-top: 20px;
-    }
-    .footer {
-      text-align: center;
-      margin-top: 40px;
-      padding-top: 20px;
-      border-top: 1px solid var(--border);
-      color: var(--muted);
-      font-size: 14px;
-    }
+    :root{--bg:#f0f4f8;--card:#fff;--text:#1a202c;--muted:#718096;--primary:#2b6cb0;--pl:#ebf4ff;--success:#38a169;--sl:#c6f6d5;--warning:#dd6b20;--wl:#feebc8;--danger:#e53e3e;--dl:#fed7d7;--border:#e2e8f0;--shadow:0 4px 6px -1px rgba(0,0,0,.1);--r:12px}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+    .container{max-width:960px;margin:0 auto;padding:20px}
+    header{text-align:center;padding:24px 0;margin-bottom:24px}
+    header h1{font-size:28px;color:var(--primary);margin-bottom:4px}
+    header .sub{color:var(--muted);font-size:15px}
+    .briefing{background:linear-gradient(135deg,#2b6cb0,#2c5282);color:#fff;border-radius:var(--r);padding:32px;margin-bottom:24px;box-shadow:0 10px 25px rgba(43,108,176,.3)}
+    .briefing-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+    .briefing h2{font-size:24px;margin-bottom:4px}
+    .briefing .date{font-size:16px;opacity:.9}
+    .briefing-actions button{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);color:#fff;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:14px;font-family:inherit;transition:background .2s}
+    .briefing-actions button:hover{background:rgba(255,255,255,.3)}
+    .briefing-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
+    .briefing-stat{background:rgba(255,255,255,.15);border-radius:8px;padding:16px;text-align:center}
+    .briefing-stat .value{font-size:36px;font-weight:800;line-height:1.2}
+    .briefing-stat .label{font-size:13px;opacity:.85;margin-top:4px}
+    .briefing-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px}
+    .briefing-member{display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(255,255,255,.1);border-radius:8px;font-size:15px}
+    .briefing-member .note{font-size:12px;opacity:.8;margin-left:4px}
+    .date-nav{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap;justify-content:center}
+    .date-btn{padding:8px 16px;border:2px solid var(--border);background:var(--card);border-radius:8px;cursor:pointer;font-size:14px;font-family:inherit;font-weight:600;color:var(--text);transition:all .2s}
+    .date-btn:hover{border-color:var(--primary);color:var(--primary)}
+    .date-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+    .card{background:var(--card);border-radius:var(--r);padding:24px;box-shadow:var(--shadow);margin-bottom:20px;border:1px solid var(--border)}
+    .card h3{font-size:18px;margin-bottom:16px;color:var(--primary)}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--border);font-size:14px}
+    th{background:var(--bg);font-weight:600;position:sticky;top:0}
+    .badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600}
+    .badge-present{background:var(--sl);color:#276749}
+    .badge-late{background:var(--wl);color:#9c4221}
+    .badge-sub{background:var(--pl);color:#2b6cb0}
+    .badge-absent{background:var(--dl);color:#9b2c2c}
+    .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+    .stat-item{background:var(--bg);border-radius:8px;padding:16px;text-align:center}
+    .stat-item .val{font-size:28px;font-weight:800;color:var(--primary)}
+    .stat-item .lbl{font-size:13px;color:var(--muted);margin-top:4px}
+    .rate-high{color:var(--success);font-weight:700}
+    .rate-mid{color:var(--warning);font-weight:700}
+    .rate-low{color:var(--danger);font-weight:700}
+    .tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:2px solid var(--border);overflow-x:auto}
+    .tab-btn{padding:10px 20px;background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;cursor:pointer;font-size:15px;font-family:inherit;font-weight:600;color:var(--muted);white-space:nowrap;transition:all .2s}
+    .tab-btn:hover{color:var(--primary)}
+    .tab-btn.active{color:var(--primary);border-bottom-color:var(--primary)}
+    .tab-content{display:none}
+    .tab-content.active{display:block}
+    .record-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);flex-wrap:wrap}
+    .record-row .name{font-weight:600;min-width:120px}
+    .status-btns{display:flex;gap:6px}
+    .status-btn{padding:6px 14px;border:2px solid var(--border);border-radius:6px;background:#fff;cursor:pointer;font-size:13px;font-family:inherit;font-weight:600;transition:all .2s}
+    .status-btn:hover{border-color:var(--primary)}
+    .sel-present{background:var(--sl);border-color:var(--success);color:#276749}
+    .sel-late{background:var(--wl);border-color:var(--warning);color:#9c4221}
+    .sel-sub{background:var(--pl);border-color:var(--primary);color:#2b6cb0}
+    .sel-absent{background:var(--dl);border-color:var(--danger);color:#9b2c2c}
+    .note-input{padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;width:160px}
+    .btn{padding:10px 20px;border:none;border-radius:8px;cursor:pointer;font-size:15px;font-family:inherit;font-weight:600;transition:all .2s}
+    .btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{background:#2c5282}
+    .btn-secondary{background:var(--muted);color:#fff}.btn-secondary:hover{background:#4a5568}
+    .btn-sm{padding:6px 12px;font-size:13px}
+    .add-form{display:flex;gap:8px;margin-bottom:16px}
+    .add-form input{flex:1;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:15px;font-family:inherit}
+    .add-form input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(43,108,176,.1)}
+    .members-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+    .member-card{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:var(--bg);border-radius:8px}
+    .member-card .mname{font-weight:600}
+    .member-card .mdetail{font-size:13px;color:var(--muted)}
+    .export-bar{display:flex;gap:8px;margin-top:16px;justify-content:flex-end}
+    .footer{text-align:center;padding:20px 0;margin-top:32px;border-top:1px solid var(--border);color:var(--muted);font-size:13px}
+    .footer a{color:var(--primary);text-decoration:none}
+    .toast{position:fixed;bottom:20px;right:20px;background:#2d3748;color:#fff;padding:12px 20px;border-radius:8px;font-size:14px;opacity:0;transform:translateY(10px);transition:all .3s;z-index:100}
+    .toast.show{opacity:1;transform:translateY(0)}
+    @media(max-width:640px){.briefing{padding:20px}.briefing-stats{grid-template-columns:1fr}.briefing-stat .value{font-size:28px}.briefing-list{grid-template-columns:1fr}.container{padding:12px}header h1{font-size:22px}.tab-btn{padding:8px 12px;font-size:13px}}
   </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>📊 出席率統計系統</h1>
-      <p class="subtitle">記錄成員出席，自動計算出席率，生成排行榜</p>
-    </header>
-
-    <div class="grid">
-      <!-- 左欄：新增成員與操作 -->
-      <div>
-        <div class="card">
-          <h2>新增成員</h2>
-          <div class="form-group">
-            <label for="memberName">成員姓名</label>
-            <input type="text" id="memberName" placeholder="例如：陳大文" autocomplete="off">
-          </div>
-          <button id="addMemberBtn">加入成員</button>
-        </div>
-
-        <div class="card" style="margin-top: 20px;">
-          <h2>操作</h2>
-          <div class="btn-group">
-            <button id="recordAttendanceBtn" class="secondary">📅 記錄今日出席</button>
-            <button id="clearAllBtn" class="secondary">🗑️ 清除所有數據</button>
-          </div>
-          <div class="export-buttons">
-            <button id="exportCSVBtn">📥 匯出 CSV</button>
-            <button id="exportJSONBtn">📥 匯出 JSON</button>
-          </div>
-        </div>
-
-        <div class="card" style="margin-top: 20px;">
-          <h2>成員列表</h2>
-          <ul class="members-list" id="membersList">
-            <!-- 動態生成 -->
-          </ul>
-        </div>
+<div class="container">
+  <header>
+    <h1>Wisdom 例會出席系統</h1>
+    <p class="sub">商會例會出席記錄與統計</p>
+  </header>
+  <div id="briefing" class="briefing"></div>
+  <div id="dateNav" class="date-nav"></div>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="history">歷史總覽</button>
+    <button class="tab-btn" data-tab="stats">成員統計</button>
+    <button class="tab-btn" data-tab="record" data-admin="1">🔒 記錄出席</button>
+    <button class="tab-btn" data-tab="members" data-admin="1">🔒 成員管理</button>
+  </div>
+  <div id="tab-history" class="tab-content active">
+    <div class="card">
+      <h3>所有出席記錄</h3>
+      <div style="overflow-x:auto"><table><thead><tr id="historyHead"></tr></thead><tbody id="historyBody"></tbody></table></div>
+      <div class="export-bar">
+        <button class="btn btn-secondary btn-sm" onclick="exportCSV()">匯出 CSV</button>
+        <button class="btn btn-secondary btn-sm" onclick="exportJSON()">匯出 JSON</button>
       </div>
-
-      <!-- 右欄：統計與排行榜 -->
-      <div>
-        <div class="card">
-          <h2>📈 統計概覽</h2>
-          <div class="stats-grid" id="statsGrid">
-            <!-- 動態生成 -->
-          </div>
-        </div>
-
-        <div class="card" style="margin-top: 20px;">
-          <h2>🏆 出席率排行榜</h2>
-          <table id="rankingTable">
-            <thead>
-              <tr>
-                <th>排名</th>
-                <th>成員</th>
-                <th>出席次數</th>
-                <th>缺席次數</th>
-                <th>出席率</th>
-                <th>最後出席</th>
-              </tr>
-            </thead>
-            <tbody id="rankingBody">
-              <!-- 動態生成 -->
-            </tbody>
-          </table>
-        </div>
-
-        <div class="card" style="margin-top: 20px;">
-          <h2>📅 近期出席記錄</h2>
-          <table id="recentTable">
-            <thead>
-              <tr>
-                <th>日期</th>
-                <th>成員</th>
-                <th>狀態</th>
-              </tr>
-            </thead>
-            <tbody id="recentBody">
-              <!-- 動態生成 -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <div class="footer">
-      <p>數據儲存在瀏覽器本地 (LocalStorage) · 最後更新: <span id="lastUpdated">-</span></p>
-      <p>GitHub: <a href="https://github.com/kto28/attendance-tracker" target="_blank">kto28/attendance-tracker</a></p>
     </div>
   </div>
+  <div id="tab-stats" class="tab-content">
+    <div class="card"><h3>出席統計概覽</h3><div id="overviewStats" class="stats-grid"></div></div>
+    <div class="card"><h3>成員出席統計</h3><div style="overflow-x:auto"><table><thead><tr><th>排名</th><th>成員</th><th>出席</th><th>遲到</th><th>代替</th><th>缺席</th><th>合格率</th><th>出席率</th></tr></thead><tbody id="memberStatsBody"></tbody></table></div></div>
+  </div>
+  <div id="tab-record" class="tab-content">
+    <div class="card">
+      <h3>記錄出席</h3>
+      <div style="margin-bottom:16px"><label style="font-weight:600;margin-right:8px">日期：</label><input type="date" id="recordDate" style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:15px;font-family:inherit"></div>
+      <div id="recordForm"></div>
+      <div style="margin-top:20px;display:flex;gap:8px">
+        <button class="btn btn-primary" onclick="saveRecord()">儲存記錄</button>
+        <button class="btn btn-secondary" onclick="resetForm()">重置</button>
+      </div>
+    </div>
+  </div>
+  <div id="tab-members" class="tab-content">
+    <div class="card">
+      <h3>成員管理</h3>
+      <div class="add-form"><input type="text" id="newName" placeholder="輸入新成員姓名..."><button class="btn btn-primary" onclick="addMember()">加入</button></div>
+      <div id="membersGrid" class="members-grid"></div>
+    </div>
+  </div>
+  <div class="footer"><p>Wisdom 商會例會出席系統 · <a href="https://github.com/kto28/attendance-tracker" target="_blank">GitHub</a></p></div>
+</div>
+<div id="toast" class="toast"></div>
+<script>
+const MEMBERS=[
+  {id:'m1',name:'Anita Cheung'},{id:'m2',name:'Bryan Cheung'},{id:'m3',name:'Eddy To'},
+  {id:'m4',name:'Fanny Lam'},{id:'m5',name:'Horace Lai'},{id:'m6',name:'Jacky Chiu'},
+  {id:'m7',name:'Jenny Tse'},{id:'m8',name:'Joseph Ng'},{id:'m9',name:'Marco Leung'},
+  {id:'m10',name:'Miranda Mok'},{id:'m11',name:'Fung Lo'},{id:'m12',name:'Jason Li'},
+  {id:'m13',name:'Cathy Wong'}
+];
+const RECORDS=[
+  {mid:'m1',name:'Anita Cheung',date:'2026-03-10',status:'present',note:''},
+  {mid:'m2',name:'Bryan Cheung',date:'2026-03-10',status:'present',note:''},
+  {mid:'m3',name:'Eddy To',date:'2026-03-10',status:'late',note:'After 12pm'},
+  {mid:'m4',name:'Fanny Lam',date:'2026-03-10',status:'present',note:''},
+  {mid:'m5',name:'Horace Lai',date:'2026-03-10',status:'present',note:''},
+  {mid:'m6',name:'Jacky Chiu',date:'2026-03-10',status:'present',note:''},
+  {mid:'m7',name:'Jenny Tse',date:'2026-03-10',status:'present',note:''},
+  {mid:'m8',name:'Joseph Ng',date:'2026-03-10',status:'late',note:'12:13pm - 1:45pm'},
+  {mid:'m9',name:'Marco Leung',date:'2026-03-10',status:'late',note:'After 1pm'},
+  {mid:'m10',name:'Miranda Mok',date:'2026-03-10',status:'present',note:''},
+  {mid:'m11',name:'Fung Lo',date:'2026-03-10',status:'present',note:''},
+  {mid:'m12',name:'Jason Li',date:'2026-03-10',status:'late',note:'After 12pm'},
+  {mid:'m1',name:'Anita Cheung',date:'2026-03-24',status:'present',note:''},
+  {mid:'m2',name:'Bryan Cheung',date:'2026-03-24',status:'present',note:''},
+  {mid:'m3',name:'Eddy To',date:'2026-03-24',status:'substitute',note:'Anson Chong'},
+  {mid:'m4',name:'Fanny Lam',date:'2026-03-24',status:'present',note:''},
+  {mid:'m5',name:'Horace Lai',date:'2026-03-24',status:'present',note:''},
+  {mid:'m6',name:'Jacky Chiu',date:'2026-03-24',status:'present',note:''},
+  {mid:'m7',name:'Jenny Tse',date:'2026-03-24',status:'present',note:''},
+  {mid:'m8',name:'Joseph Ng',date:'2026-03-24',status:'present',note:''},
+  {mid:'m9',name:'Marco Leung',date:'2026-03-24',status:'present',note:''},
+  {mid:'m10',name:'Miranda Mok',date:'2026-03-24',status:'present',note:''},
+  {mid:'m11',name:'Fung Lo',date:'2026-03-24',status:'present',note:''},
+  {mid:'m12',name:'Jason Li',date:'2026-03-24',status:'present',note:''},
+  {mid:'m1',name:'Anita Cheung',date:'2026-04-14',status:'present',note:''},
+  {mid:'m2',name:'Bryan Cheung',date:'2026-04-14',status:'present',note:''},
+  {mid:'m3',name:'Eddy To',date:'2026-04-14',status:'present',note:''},
+  {mid:'m4',name:'Fanny Lam',date:'2026-04-14',status:'present',note:''},
+  {mid:'m5',name:'Horace Lai',date:'2026-04-14',status:'substitute',note:'Francis'},
+  {mid:'m6',name:'Jacky Chiu',date:'2026-04-14',status:'present',note:''},
+  {mid:'m7',name:'Jenny Tse',date:'2026-04-14',status:'substitute',note:'Francis'},
+  {mid:'m8',name:'Joseph Ng',date:'2026-04-14',status:'present',note:''},
+  {mid:'m9',name:'Marco Leung',date:'2026-04-14',status:'late',note:'After 12:15pm'},
+  {mid:'m10',name:'Miranda Mok',date:'2026-04-14',status:'present',note:''},
+  {mid:'m11',name:'Fung Lo',date:'2026-04-14',status:'substitute',note:'Jarvis'},
+  {mid:'m12',name:'Jason Li',date:'2026-04-14',status:'present',note:''},
+  {mid:'m1',name:'Anita Cheung',date:'2026-04-28',status:'present',note:''},
+  {mid:'m2',name:'Bryan Cheung',date:'2026-04-28',status:'present',note:''},
+  {mid:'m3',name:'Eddy To',date:'2026-04-28',status:'present',note:''},
+  {mid:'m4',name:'Fanny Lam',date:'2026-04-28',status:'present',note:''},
+  {mid:'m5',name:'Horace Lai',date:'2026-04-28',status:'present',note:''},
+  {mid:'m6',name:'Jacky Chiu',date:'2026-04-28',status:'present',note:''},
+  {mid:'m7',name:'Jenny Tse',date:'2026-04-28',status:'present',note:''},
+  {mid:'m8',name:'Joseph Ng',date:'2026-04-28',status:'present',note:''},
+  {mid:'m9',name:'Marco Leung',date:'2026-04-28',status:'present',note:''},
+  {mid:'m10',name:'Miranda Mok',date:'2026-04-28',status:'present',note:''},
+  {mid:'m11',name:'Fung Lo',date:'2026-04-28',status:'substitute',note:'波哥'},
+  {mid:'m12',name:'Jason Li',date:'2026-04-28',status:'present',note:''},
+  {mid:'m1',name:'Anita Cheung',date:'2026-05-12',status:'present',note:''},
+  {mid:'m2',name:'Bryan Cheung',date:'2026-05-12',status:'present',note:''},
+  {mid:'m3',name:'Eddy To',date:'2026-05-12',status:'present',note:''},
+  {mid:'m4',name:'Fanny Lam',date:'2026-05-12',status:'present',note:''},
+  {mid:'m5',name:'Horace Lai',date:'2026-05-12',status:'present',note:''},
+  {mid:'m6',name:'Jacky Chiu',date:'2026-05-12',status:'present',note:''},
+  {mid:'m7',name:'Jenny Tse',date:'2026-05-12',status:'present',note:''},
+  {mid:'m8',name:'Joseph Ng',date:'2026-05-12',status:'present',note:''},
+  {mid:'m9',name:'Marco Leung',date:'2026-05-12',status:'present',note:''},
+  {mid:'m10',name:'Miranda Mok',date:'2026-05-12',status:'present',note:''},
+  {mid:'m11',name:'Fung Lo',date:'2026-05-12',status:'present',note:''},
+  {mid:'m12',name:'Jason Li',date:'2026-05-12',status:'present',note:''},
+  {mid:'m1',name:'Anita Cheung',date:'2026-05-26',status:'present',note:''},
+  {mid:'m2',name:'Bryan Cheung',date:'2026-05-26',status:'present',note:''},
+  {mid:'m3',name:'Eddy To',date:'2026-05-26',status:'present',note:''},
+  {mid:'m4',name:'Fanny Lam',date:'2026-05-26',status:'substitute',note:'安安'},
+  {mid:'m5',name:'Horace Lai',date:'2026-05-26',status:'present',note:''},
+  {mid:'m6',name:'Jacky Chiu',date:'2026-05-26',status:'present',note:''},
+  {mid:'m7',name:'Jenny Tse',date:'2026-05-26',status:'present',note:''},
+  {mid:'m8',name:'Joseph Ng',date:'2026-05-26',status:'present',note:''},
+  {mid:'m9',name:'Marco Leung',date:'2026-05-26',status:'late',note:'12:27'},
+  {mid:'m10',name:'Miranda Mok',date:'2026-05-26',status:'present',note:''},
+  {mid:'m11',name:'Fung Lo',date:'2026-05-26',status:'substitute',note:'Sandy'},
+  {mid:'m12',name:'Jason Li',date:'2026-05-26',status:'present',note:''},
+  {mid:'m1',name:'Anita Cheung',date:'2026-06-09',status:'substitute',note:'波哥'},
+  {mid:'m2',name:'Bryan Cheung',date:'2026-06-09',status:'present',note:''},
+  {mid:'m3',name:'Eddy To',date:'2026-06-09',status:'present',note:''},
+  {mid:'m4',name:'Fanny Lam',date:'2026-06-09',status:'present',note:''},
+  {mid:'m5',name:'Horace Lai',date:'2026-06-09',status:'present',note:''},
+  {mid:'m6',name:'Jacky Chiu',date:'2026-06-09',status:'present',note:''},
+  {mid:'m7',name:'Jenny Tse',date:'2026-06-09',status:'present',note:''},
+  {mid:'m8',name:'Joseph Ng',date:'2026-06-09',status:'present',note:''},
+  {mid:'m9',name:'Marco Leung',date:'2026-06-09',status:'substitute',note:'Dorothy'},
+  {mid:'m10',name:'Miranda Mok',date:'2026-06-09',status:'present',note:''},
+  {mid:'m11',name:'Fung Lo',date:'2026-06-09',status:'absent',note:''},
+  {mid:'m12',name:'Jason Li',date:'2026-06-09',status:'present',note:''},
+  {mid:'m13',name:'Cathy Wong',date:'2026-06-09',status:'late',note:'12:22'}
+];
 
-  <script>
-    // 數據結構
-    let members = JSON.parse(localStorage.getItem('attendance_members')) || [];
-    let attendance = JSON.parse(localStorage.getItem('attendance_records')) || [];
+let members=[...MEMBERS,...JSON.parse(localStorage.getItem('w_xm')||'[]')];
+let records=[...RECORDS,...JSON.parse(localStorage.getItem('w_xr')||'[]')];
+let selDate=null,formState={};
 
-    // DOM 元素
-    const memberNameInput = document.getElementById('memberName');
-    const addMemberBtn = document.getElementById('addMemberBtn');
-    const recordAttendanceBtn = document.getElementById('recordAttendanceBtn');
-    const clearAllBtn = document.getElementById('clearAllBtn');
-    const exportCSVBtn = document.getElementById('exportCSVBtn');
-    const exportJSONBtn = document.getElementById('exportJSONBtn');
-    const membersList = document.getElementById('membersList');
-    const statsGrid = document.getElementById('statsGrid');
-    const rankingBody = document.getElementById('rankingBody');
-    const recentBody = document.getElementById('recentBody');
-    const lastUpdatedSpan = document.getElementById('lastUpdated');
+function getDates(){return[...new Set(records.map(r=>r.date))].sort().reverse()}
+function getRecs(d){return records.filter(r=>r.date===d)}
+function sIcon(s){return{present:'\u2705',late:'\u23f0',substitute:'\ud83d\udd04',absent:'\u274c'}[s]||'?'}
+function sText(s){return{present:'\u51fa\u5e2d',late:'\u9072\u5230',substitute:'\u4ee3\u66ff',absent:'\u7f3a\u5e2d'}[s]||s}
+function sBadge(s){return{present:'badge-present',late:'badge-late',substitute:'badge-sub',absent:'badge-absent'}[s]||''}
+function fmtDate(d){const[y,m,day]=d.split('-');return y+'\u5e74'+parseInt(m)+'\u6708'+parseInt(day)+'\u65e5'}
+function sOrder(s){return{present:1,substitute:2,late:3,absent:4}[s]||9}
+function sortRecs(recs){return[...recs].sort((a,b)=>sOrder(a.status)-sOrder(b.status))}
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2000)}
 
-    // 初始化
-    function init() {
-      updateLastUpdated();
-      renderMembersList();
-      renderStats();
-      renderRanking();
-      renderRecent();
-    }
+function renderBriefing(){
+  const recs=getRecs(selDate),el=document.getElementById('briefing');
+  if(!recs.length){el.innerHTML='<p style="text-align:center;opacity:.8;padding:20px">\u9078\u64c7\u65e5\u671f\u67e5\u770b\u7c21\u5831</p>';return}
+  const total=members.length,attended=recs.filter(r=>r.status!=='absent').length,qualified=recs.filter(r=>r.status==='present').length;
+  const qr=total>0?(qualified/total*100).toFixed(1):0;
+  const sorted=sortRecs(recs);
+  const list=sorted.map(r=>{
+    const n=r.note?'<span class="note">\u2014 '+sText(r.status)+' ('+r.note+')</span>':'';
+    return'<div class="briefing-member"><span>'+sIcon(r.status)+'</span><span>'+r.name+'</span>'+n+'</div>'
+  }).join('');
+  el.innerHTML='<div class="briefing-header"><div><h2>Wisdom \u4f8b\u6703\u51fa\u5e2d\u7c21\u5831</h2><div class="date">\ud83d\udcc5 '+fmtDate(selDate)+'</div></div><div class="briefing-actions"><button onclick="copyBriefing()">\ud83d\udccb \u8907\u88fd\u7c21\u5831</button></div></div><div class="briefing-stats"><div class="briefing-stat"><div class="value">'+attended+'/'+total+'</div><div class="label">\u51fa\u5e2d\u4eba\u6578</div></div><div class="briefing-stat"><div class="value">'+qualified+'/'+total+'</div><div class="label">\u5408\u683c\u51fa\u5e2d</div></div><div class="briefing-stat"><div class="value">'+qr+'%</div><div class="label">\u5408\u683c\u7387</div></div></div><div class="briefing-list">'+list+'</div>'
+}
 
-    // 更新最後更新時間
-    function updateLastUpdated() {
-      const now = new Date();
-      lastUpdatedSpan.textContent = now.toLocaleString('zh-Hant');
-    }
+function copyBriefing(){
+  const recs=getRecs(selDate),total=members.length;
+  const attended=recs.filter(r=>r.status!=='absent').length,qualified=recs.filter(r=>r.status==='present').length;
+  const qr=total>0?(qualified/total*100).toFixed(1):0;
+  let t='\ud83d\udcca Wisdom \u4f8b\u6703\u51fa\u5e2d\u7c21\u5831\n\ud83d\udcc5 '+fmtDate(selDate)+'\n\n\u51fa\u5e2d\u4eba\u6578\uff1a'+attended+'/'+total+'\n\u5408\u683c\u51fa\u5e2d\uff1a'+qualified+'/'+total+' ('+qr+'%)\n\n';
+  sortRecs(recs).forEach(r=>{const n=r.note?' \u2014 '+sText(r.status)+' ('+r.note+')':'';t+=sIcon(r.status)+' '+r.name+n+'\n'});
+  navigator.clipboard.writeText(t).then(()=>toast('\u2705 \u5df2\u8907\u88fd\u5230\u526a\u8cbc\u677f'))
+}
 
-    // 儲存數據
-    function saveData() {
-      localStorage.setItem('attendance_members', JSON.stringify(members));
-      localStorage.setItem('attendance_records', JSON.stringify(attendance));
-      updateLastUpdated();
-    }
+function renderDateNav(){
+  const dates=getDates();if(!selDate&&dates.length)selDate=dates[0];
+  document.getElementById('dateNav').innerHTML=dates.map(d=>'<button class="date-btn'+(d===selDate?' active':'')+'" onclick="selectDate(\''+d+'\')">'+d+'</button>').join('')
+}
+function selectDate(d){selDate=d;renderDateNav();renderBriefing()}
 
-    // 新增成員
-    function addMember() {
-      const name = memberNameInput.value.trim();
-      if (!name) {
-        alert('請輸入成員姓名');
-        return;
-      }
-      if (members.some(m => m.name === name)) {
-        alert('成員已存在');
-        return;
-      }
-      members.push({
-        id: Date.now().toString(),
-        name,
-        joinDate: new Date().toISOString().split('T')[0]
-      });
-      memberNameInput.value = '';
-      saveData();
-      renderMembersList();
-      renderStats();
-      renderRanking();
-    }
+const ADMIN_PIN='wisdom2026';
+let isAdmin=sessionStorage.getItem('w_admin')==='1';
+function checkAdmin(){
+  if(isAdmin)return true;
+  const pw=prompt('請輸入管理員密碼：');
+  if(pw===ADMIN_PIN){isAdmin=true;sessionStorage.setItem('w_admin','1');updateLockIcons();toast('\u2705 已解鎖管理功能');return true}
+  if(pw!==null)toast('\u274c 密碼錯誤');return false
+}
+function updateLockIcons(){
+  document.querySelectorAll('.tab-btn[data-admin]').forEach(b=>{
+    const label=b.dataset.tab==='record'?'記錄出席':'成員管理';
+    b.textContent=(isAdmin?'\u{1F513} ':'\u{1F512} ')+label
+  })
+}
+document.querySelectorAll('.tab-btn').forEach(b=>{b.addEventListener('click',()=>{
+  if(b.dataset.admin&&!isAdmin){if(!checkAdmin())return}
+  document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');document.getElementById('tab-'+b.dataset.tab).classList.add('active')
+})});
+updateLockIcons();
 
-    // 刪除成員
-    function deleteMember(id) {
-      if (!confirm('確定刪除這位成員？所有出席記錄也會一併刪除。')) return;
-      members = members.filter(m => m.id !== id);
-      attendance = attendance.filter(r => r.memberId !== id);
-      saveData();
-      renderMembersList();
-      renderStats();
-      renderRanking();
-      renderRecent();
-    }
+function renderHistory(){
+  const dates=getDates(),head=document.getElementById('historyHead'),body=document.getElementById('historyBody');
+  head.innerHTML='<th>\u6210\u54e1</th>'+dates.map(d=>'<th>'+d+'</th>').join('');
+  let rows=members.map(m=>{
+    const cells=dates.map(d=>{const r=records.find(x=>x.mid===m.id&&x.date===d);if(!r)return'<td>\u2014</td>';const n=r.note?'<br><small>'+r.note+'</small>':'';return'<td><span class="badge '+sBadge(r.status)+'">'+sText(r.status)+'</span>'+n+'</td>'}).join('');
+    return'<tr><td><strong>'+m.name+'</strong></td>'+cells+'</tr>'
+  }).join('');
+  const sumA=dates.map(d=>'<td><strong>'+getRecs(d).filter(r=>r.status!=='absent').length+'</strong></td>').join('');
+  const sumQ=dates.map(d=>'<td><strong>'+getRecs(d).filter(r=>r.status==='present').length+'</strong></td>').join('');
+  body.innerHTML=rows+'<tr style="background:var(--bg)"><td><strong>\u51fa\u5e2d\u4eba\u6578</strong></td>'+sumA+'</tr><tr style="background:var(--bg)"><td><strong>\u5408\u683c\u4eba\u6578</strong></td>'+sumQ+'</tr>'
+}
 
-    // 記錄今日出席
-    function recordAttendance() {
-      const today = new Date().toISOString().split('T')[0];
-      if (attendance.some(r => r.date === today)) {
-        if (!confirm('今日已有記錄，是否重新記錄？')) return;
-        attendance = attendance.filter(r => r.date !== today);
-      }
-      members.forEach(member => {
-        const status = prompt(`請輸入 ${member.name} 的出席狀態 (出席/缺席/遲到):`, '出席')?.trim() || '缺席';
-        attendance.push({
-          memberId: member.id,
-          memberName: member.name,
-          date: today,
-          status: status === '出席' ? 'present' : status === '遲到' ? 'late' : 'absent'
-        });
-      });
-      saveData();
-      renderStats();
-      renderRanking();
-      renderRecent();
-      alert('今日出席記錄完成');
-    }
+function renderStats(){
+  const dates=getDates(),n=dates.length;
+  const avg=n>0?(dates.reduce((s,d)=>{const r=getRecs(d);return s+r.filter(x=>x.status==='present').length/members.length*100},0)/n).toFixed(1):0;
+  document.getElementById('overviewStats').innerHTML='<div class="stat-item"><div class="val">'+members.length+'</div><div class="lbl">\u7e3d\u6210\u54e1\u6578</div></div><div class="stat-item"><div class="val">'+n+'</div><div class="lbl">\u5df2\u8a18\u9304\u4f8b\u6703</div></div><div class="stat-item"><div class="val">'+avg+'%</div><div class="lbl">\u5e73\u5747\u5408\u683c\u7387</div></div>';
+  const ms=members.map(m=>{const mr=records.filter(r=>r.mid===m.id),p=mr.filter(r=>r.status==='present').length,l=mr.filter(r=>r.status==='late').length,sb=mr.filter(r=>r.status==='substitute').length,a=mr.filter(r=>r.status==='absent').length,t=mr.length;return{...m,p,l,sb,a,qr:t>0?+(p/t*100).toFixed(1):0,ar:t>0?+((p+l+sb)/t*100).toFixed(1):0}}).sort((a,b)=>b.qr-a.qr);
+  document.getElementById('memberStatsBody').innerHTML=ms.map((m,i)=>{const c=m.qr>=80?'rate-high':m.qr>=50?'rate-mid':'rate-low';return'<tr><td>'+(i+1)+'</td><td><strong>'+m.name+'</strong></td><td>'+m.p+'</td><td>'+m.l+'</td><td>'+m.sb+'</td><td>'+m.a+'</td><td><span class="'+c+'">'+m.qr+'%</span></td><td>'+m.ar+'%</td></tr>'}).join('')
+}
 
-    // 計算成員統計
-    function calculateMemberStats(memberId) {
-      const records = attendance.filter(r => r.memberId === memberId);
-      const present = records.filter(r => r.status === 'present').length;
-      const late = records.filter(r => r.status === 'late').length;
-      const absent = records.filter(r => r.status === 'absent').length;
-      const total = records.length;
-      const rate = total > 0 ? Math.round((present + late * 0.5) / total * 100) : 0;
-      const lastDate = records.length > 0 ? records[records.length - 1].date : '從未';
-      return { present, late, absent, total, rate, lastDate };
-    }
+function renderRecordForm(){
+  document.getElementById('recordDate').value=new Date().toISOString().split('T')[0];
+  formState={};members.forEach(m=>{formState[m.id]={status:'present',note:''}});renderRows()
+}
+function renderRows(){
+  document.getElementById('recordForm').innerHTML=members.map(m=>{
+    const s=formState[m.id],show=s.status==='late'||s.status==='substitute',ph=s.status==='late'?'\u4f8b\uff1aAfter 12pm':'\u4ee3\u66ff\u4eba\u59d3\u540d';
+    return'<div class="record-row"><span class="name">'+m.name+'</span><div class="status-btns">'+
+    ['present','late','substitute','absent'].map(st=>{const lb={present:'\u51fa\u5e2d',late:'\u9072\u5230',substitute:'\u4ee3\u66ff',absent:'\u7f3a\u5e2d'}[st];const cls=s.status===st?'sel-'+{present:'present',late:'late',substitute:'sub',absent:'absent'}[st]:'';return'<button class="status-btn '+cls+'" onclick="setStatus(\''+m.id+"','"+st+"')\">"+lb+'</button>'}).join('')+
+    '</div>'+(show?'<input class="note-input" placeholder="'+ph+'" value="'+s.note+'" onchange="setNote(\''+m.id+"',this.value)\">":'')+
+    '</div>'
+  }).join('')
+}
+function setStatus(mid,st){formState[mid].status=st;if(st!=='late'&&st!=='substitute')formState[mid].note='';renderRows()}
+function setNote(mid,v){formState[mid].note=v}
+function saveRecord(){
+  const date=document.getElementById('recordDate').value;if(!date){alert('\u8acb\u9078\u64c7\u65e5\u671f');return}
+  records=records.filter(r=>r.date!==date);
+  members.forEach(m=>{const s=formState[m.id];records.push({mid:m.id,name:m.name,date,status:s.status,note:s.note})});
+  const hDates=[...new Set(RECORDS.map(r=>r.date))];
+  localStorage.setItem('w_xr',JSON.stringify(records.filter(r=>!hDates.includes(r.date))));
+  selDate=date;renderAll();toast('\u2705 \u51fa\u5e2d\u8a18\u9304\u5df2\u5132\u5b58')
+}
+function resetForm(){members.forEach(m=>{formState[m.id]={status:'present',note:''}});renderRows()}
 
-    // 渲染成員列表
-    function renderMembersList() {
-      membersList.innerHTML = '';
-      members.forEach(member => {
-        const stats = calculateMemberStats(member.id);
-        const li = document.createElement('li');
-        li.className = 'member-item';
-        li.innerHTML = `
-          <div>
-            <div class="member-name">${member.name}</div>
-            <div class="member-stats">加入: ${member.joinDate} · 出席率: ${stats.rate}%</div>
-          </div>
-          <button onclick="deleteMember('${member.id}')" style="padding:6px 12px;font-size:14px;">刪除</button>
-        `;
-        membersList.appendChild(li);
-      });
-    }
+function renderMembers(){
+  document.getElementById('membersGrid').innerHTML=members.map(m=>{
+    const n=records.filter(r=>r.mid===m.id).length,isDef=MEMBERS.some(d=>d.id===m.id);
+    return'<div class="member-card"><div><div class="mname">'+m.name+'</div><div class="mdetail">'+n+' \u6b21\u8a18\u9304</div></div>'+(isDef?'':'<button class="btn btn-sm" style="background:var(--danger);color:#fff" onclick="removeMember(\''+m.id+'\')">\u522a\u9664</button>')+'</div>'
+  }).join('')
+}
+function addMember(){
+  const inp=document.getElementById('newName'),name=inp.value.trim();if(!name)return;
+  if(members.some(m=>m.name===name)){alert('\u6210\u54e1\u5df2\u5b58\u5728');return}
+  members.push({id:'x'+Date.now(),name});
+  localStorage.setItem('w_xm',JSON.stringify(members.filter(m=>!MEMBERS.some(d=>d.id===m.id))));
+  inp.value='';renderAll();toast('\u2705 \u6210\u54e1\u5df2\u65b0\u589e')
+}
+function removeMember(id){
+  if(!confirm('\u78ba\u5b9a\u522a\u9664\u6b64\u6210\u54e1\uff1f'))return;
+  members=members.filter(m=>m.id!==id);records=records.filter(r=>r.mid!==id);
+  localStorage.setItem('w_xm',JSON.stringify(members.filter(m=>!MEMBERS.some(d=>d.id===m.id))));renderAll()
+}
 
-    // 渲染統計概覽
-    function renderStats() {
-      const totalMembers = members.length;
-      const totalRecords = attendance.length;
-      const uniqueDates = [...new Set(attendance.map(r => r.date))].length;
-      const avgRate = members.length > 0 
-        ? Math.round(members.reduce((sum, m) => sum + calculateMemberStats(m.id).rate, 0) / members.length)
-        : 0;
-      
-      statsGrid.innerHTML = `
-        <div class="stat-card">
-          <div class="stat-label">總成員數</div>
-          <div class="stat-value">${totalMembers}</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">總記錄數</div>
-          <div class="stat-value">${totalRecords}</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">記錄天數</div>
-          <div class="stat-value">${uniqueDates}</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">平均出席率</div>
-          <div class="stat-value">${avgRate}%</div>
-        </div>
-      `;
-    }
+function exportCSV(){
+  const dates=getDates();let csv='\ufeff\u6210\u54e1,'+dates.join(',')+'\n';
+  members.forEach(m=>{const row=dates.map(d=>{const r=records.find(x=>x.mid===m.id&&x.date===d);if(!r)return'';return r.status==='present'?'Y':r.status==='late'?'\u9072\u5230('+r.note+')':r.status==='substitute'?'\u4ee3\u66ff('+r.note+')':'\u7f3a\u5e2d'});csv+=m.name+','+row.join(',')+'\n'});
+  dl(csv,'Wisdom\u51fa\u5e2d\u8a18\u9304.csv','text/csv;charset=utf-8;')
+}
+function exportJSON(){dl(JSON.stringify({members,records,exportedAt:new Date().toISOString()},null,2),'Wisdom\u51fa\u5e2d\u8a18\u9304.json','application/json')}
+function dl(content,fn,type){const b=new Blob([content],{type}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=fn;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(u)}
 
-    // 渲染排行榜
-    function renderRanking() {
-      const ranked = members.map(member => {
-        const stats = calculateMemberStats(member.id);
-        return { ...member, ...stats };
-      }).sort((a, b) => b.rate - a.rate);
-      
-      rankingBody.innerHTML = '';
-      ranked.forEach((member, index) => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${index + 1}</td>
-          <td><strong>${member.name}</strong></td>
-          <td>${member.present}</td>
-          <td>${member.absent}</td>
-          <td><strong>${member.rate}%</strong></td>
-          <td>${member.lastDate}</td>
-        `;
-        rankingBody.appendChild(row);
-      });
-    }
-
-    // 渲染近期記錄
-    function renderRecent() {
-      const recent = [...attendance].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 10);
-      recentBody.innerHTML = '';
-      recent.forEach(record => {
-        const row = document.createElement('tr');
-        const badgeClass = {
-          present: 'badge-present',
-          late: 'badge-late',
-          absent: 'badge-absent'
-        }[record.status];
-        const statusText = {
-          present: '出席',
-          late: '遲到',
-          absent: '缺席'
-        }[record.status];
-        row.innerHTML = `
-          <td>${record.date}</td>
-          <td>${record.memberName}</td>
-          <td><span class="attendance-badge ${badgeClass}">${statusText}</span></td>
-        `;
-        recentBody.appendChild(row);
-      });
-    }
-
-    // 匯出 CSV
-    function exportCSV() {
-      const headers = ['成員ID', '成員姓名', '日期', '狀態'];
-      const rows = attendance.map(r => [r.memberId, r.memberName, r.date, r.status]);
-      const csvContent = [
-        headers.join(','),
-        ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
-      ].join('\n');
-      const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `出席記錄_${new Date().toISOString().split('T')[0]}.csv`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }
-
-    // 匯出 JSON
-    function exportJSON() {
-      const data = {
-        members,
-        attendance,
-        exportedAt: new Date().toISOString()
-      };
-      const jsonStr = JSON.stringify(data, null, 2);
-      const blob = new Blob([jsonStr], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `出席記錄_${new Date().toISOString().split('T')[0]}.json`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }
-
-    // 清除所有數據
-    function clearAll() {
-      if (!confirm('確定清除所有成員和出席記錄？此操作無法復原。')) return;
-      members = [];
-      attendance = [];
-      saveData();
-      renderMembersList();
-      renderStats();
-      renderRanking();
-      renderRecent();
-    }
-
-    // 事件監聽
-    addMemberBtn.addEventListener('click', addMember);
-    memberNameInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') addMember();
-    });
-    recordAttendanceBtn.addEventListener('click', recordAttendance);
-    clearAllBtn.addEventListener('click', clearAll);
-    exportCSVBtn.addEventListener('click', exportCSV);
-    exportJSONBtn.addEventListener('click', exportJSON);
-
-    // 初始化
-    init();
-  </script>
+function renderAll(){renderDateNav();renderBriefing();renderHistory();renderStats();renderRecordForm();renderMembers()}
+document.getElementById('newName').addEventListener('keypress',e=>{if(e.key==='Enter')addMember()});
+renderAll();
+</script>
 </body>
 </html>
